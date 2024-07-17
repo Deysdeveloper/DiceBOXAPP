@@ -60,9 +60,6 @@ fun AddingBtn(modifier:Modifier= Modifier
     Column(modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(imageResource),
-            contentDescription = result.toString())
-        //Spacer(modifier = modifier.height(16.dp))
-        Button(onClick = { result = (1..6).random() }) {
             Text(stringResource(R.string.roll))
             
         }
