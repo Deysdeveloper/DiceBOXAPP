@@ -2,9 +2,12 @@ package com.example.testbtn
 
 import android.media.Image
 import android.os.Bundle
+import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,17 +16,21 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -56,12 +63,34 @@ fun AddingBtn(modifier:Modifier= Modifier
         4->R.drawable.dice_4
         5->R.drawable.dice_5
         else->R.drawable.dice_6
+
     }
+    var scale= remember {
+        androidx.compose.animation.core.Animatable(0f)
+    }
+    LaunchedEffect(key1 = result){
+        scale.animateTo(targetValue = 0.5f)
+        scale.animateTo(targetValue = 360f,
+            animationSpec = tween(
+                durationMillis = 1000,
+                easing = {OvershootInterpolator(2f).getInterpolation(it)
+                }
+            )
+        )
+    }
+
+
     Column(modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(imageResource),
+            contentDescription = result.toString(),
+            modifier = Modifier
+                .size(200.dp)
+                .weight(1f)
+                .rotate(scale.value))
+        FloatingActionButton(onClick = { result = (1..6).random() }) {
             Text(stringResource(R.string.roll))
-            
+
         }
 
     }
@@ -70,6 +99,6 @@ fun AddingBtn(modifier:Modifier= Modifier
 @Composable
 fun DiceRoller() {
     TestBtnTheme {
-       AddingBtn()
+        AddingBtn()
     }
 }
